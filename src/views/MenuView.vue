@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { API_URL } from "@/api.js";
+
 export default {
   name: "MenuView",
   data() {
@@ -24,7 +26,7 @@ export default {
     };
   },
   mounted() {
-    fetch("http://localhost:3000/cardapio")
+    fetch(`${API_URL}/cardapio`)
       .then((resposta) => resposta.json())
       .then((dados) => {
         this.cardapio = dados;

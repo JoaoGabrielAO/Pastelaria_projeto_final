@@ -2,19 +2,16 @@
   <div class="pedidos">
     <h1>Pedidos Realizados</h1>
 
-    <!-- Alerta de remoção -->
     <AlertaComponent
       :visivel="alerta.visivel"
       :tipo="alerta.tipo"
       :mensagem="alerta.mensagem"
     />
 
-    <!-- Quando não há pedidos -->
     <p v-if="pedidos.length === 0" class="vazio">
       Nenhum pedido por enquanto. Que tal fazer o primeiro? 🥟
     </p>
 
-    <!-- Lista de pedidos -->
     <div class="lista">
       <div class="pedido-card" v-for="pedido in pedidos" :key="pedido.id">
         <div class="info">
@@ -35,6 +32,7 @@
 
 <script>
 import AlertaComponent from "@/components/AlertaComponent.vue";
+import { API_URL } from "@/api.js";
 
 export default {
   name: "PedidosView",
@@ -56,17 +54,16 @@ export default {
   },
   methods: {
     carregarPedidos() {
-      fetch("http://localhost:3000/pedidos")
+      fetch(`${API_URL}/pedidos`)
         .then((r) => r.json())
         .then((dados) => {
           this.pedidos = dados;
         });
     },
     excluirPedido(id) {
-      fetch("http://localhost:3000/pedidos/" + id, {
+      fetch(`${API_URL}/pedidos/` + id, {
         method: "DELETE",
       }).then(() => {
-        // Remove da lista na hora (atualização em tempo real)
         this.pedidos = this.pedidos.filter((p) => p.id !== id);
         this.mostrarAlerta("sucesso", "Pedido excluído com sucesso!");
       });

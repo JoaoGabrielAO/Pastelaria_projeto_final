@@ -2,7 +2,6 @@
   <div class="config">
     <h1>Monte seu Pedido</h1>
 
-    <!-- Componente de alerta reutilizável -->
     <AlertaComponent
       :visivel="alerta.visivel"
       :tipo="alerta.tipo"
@@ -10,11 +9,9 @@
     />
 
     <div class="formulario">
-      <!-- Nome do cliente -->
       <label>Nome do Cliente *</label>
       <input type="text" v-model="pedido.cliente" placeholder="Digite seu nome" />
 
-      <!-- Sabor do pastel -->
       <label>Sabor do Pastel *</label>
       <select v-model="pedido.sabor">
         <option value="">Selecione um sabor</option>
@@ -23,7 +20,6 @@
         </option>
       </select>
 
-      <!-- Tamanho -->
       <label>Tamanho *</label>
       <select v-model="pedido.tamanho">
         <option value="">Selecione um tamanho</option>
@@ -32,7 +28,6 @@
         </option>
       </select>
 
-      <!-- Opcionais -->
       <label>Opcionais</label>
       <div class="opcionais">
         <label v-for="o in opcionais" :key="o.id" class="checkbox">
@@ -50,6 +45,7 @@
 
 <script>
 import AlertaComponent from "@/components/AlertaComponent.vue";
+import { API_URL } from "@/api.js";
 
 export default {
   name: "ConfiguracaoPedidoView",
@@ -75,20 +71,18 @@ export default {
     };
   },
   mounted() {
-    // Busca os dados do JSON Server
-    fetch("http://localhost:3000/cardapio")
+    fetch(`${API_URL}/cardapio`)
       .then((r) => r.json())
       .then((dados) => (this.cardapio = dados));
 
-    fetch("http://localhost:3000/tamanhos")
+    fetch(`${API_URL}/tamanhos`)
       .then((r) => r.json())
       .then((dados) => (this.tamanhos = dados));
 
-    fetch("http://localhost:3000/opcionais")
+    fetch(`${API_URL}/opcionais`)
       .then((r) => r.json())
       .then((dados) => (this.opcionais = dados));
 
-    // Se veio um sabor pré-selecionado do cardápio
     if (this.$route.query.sabor) {
       this.pedido.sabor = this.$route.query.sabor;
     }
@@ -100,7 +94,6 @@ export default {
       this.alerta.visivel = true;
     },
     confirmarPedido() {
-      // VALIDAÇÃO dos campos obrigatórios
       if (!this.pedido.cliente) {
         this.mostrarAlerta("erro", "Por favor, informe o nome do cliente.");
         return;
@@ -114,8 +107,7 @@ export default {
         return;
       }
 
-      // Se passou na validação, salva o pedido no banco
-      fetch("http://localhost:3000/pedidos", {
+      fetch(`${API_URL}/pedidos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(this.pedido),
@@ -123,7 +115,6 @@ export default {
         .then((r) => r.json())
         .then(() => {
           this.mostrarAlerta("sucesso", "Pedido confirmado com sucesso!");
-          // Redireciona para a tela de pedidos após 1,5s
           setTimeout(() => {
             this.$router.push({ name: "pedidos" });
           }, 1500);
